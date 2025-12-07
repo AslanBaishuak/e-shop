@@ -1,24 +1,25 @@
-import React, { useState } from "react";
+import React, {useState} from 'react';
 
-const SearchForm = ({ onSearchHandler }) => {
-  const [searchValue, setSearchValue] = useState("");
+const SearchForm = ({onSearchHandler}) => {
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    onSearchHandler(searchValue);
-  }
+    const [searchValue, setSearchValue] = useState("");
 
-  return (
-    <form className="search-form" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        className="search-input"
-        value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
-      />
-      <button type="submit">Search</button>
-    </form>
-  );
-};
+    function handleSubmit (e) {
+        e.preventDefault();
+        onSearchHandler(searchValue);
+    }
+
+    return (
+        <form className="search-form" onSubmit={handleSubmit}>
+            <input 
+                type="text" 
+                className="search-input" 
+                value={searchValue} 
+                onChange={(e) => setSearchValue(e.target.value)}
+                />
+            <button type="submit">Search</button>
+        </form>
+    )
+}
 
 export default SearchForm;

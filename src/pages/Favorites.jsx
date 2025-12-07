@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import ShoppingCartItem from "../components/ShoppingCartItem";
+import FavoritesItem from "../components/FavoritesItem";
+import "../Favorites.css";
 
 const Favorites = () => {
   const [favoriteItems, setFavoriteItems] = useState([]);
@@ -21,9 +22,9 @@ const Favorites = () => {
         <p>No favorite items found.</p>
       ) : (
         favoriteItems.map((item, index) => (
-          <ShoppingCartItem
+          <FavoritesItem
             key={index}
-            src={item.img}
+            src={item.img}  
             title={item.title}
             price={item.price}
             quantity={item.quantity}
