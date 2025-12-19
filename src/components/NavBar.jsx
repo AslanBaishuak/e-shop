@@ -10,10 +10,11 @@ const NavBar = () => {
                 <Link to="/">Eshop</Link>
             </div>
             <div className="nav-links">
-                <Link className="nav-link" to="/products">New</Link>
+                <Link className="nav-link" to="/products">All Products</Link>
                 <Link className="nav-link" to="/products">Men</Link>
                 <Link className="nav-link" to="/products">Women</Link>
                 <Link className="nav-link" to="/products">Sport</Link>
+                <Link className='nav-link' to="/addProduct">Add Product</Link>
             </div>
             <div className="nav-buttons">
                 <Link to="/cart"><ShoppingCart className="nav-icon" /></Link>

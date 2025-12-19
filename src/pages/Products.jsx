@@ -1,9 +1,10 @@
 // Products.jsx
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import ProductCard from "../components/ProductCard.jsx";
 import FilterSidebar from "../components/FilterSidebar.jsx";
 import SearchForm from "../components/SearchForm.jsx";
 import { Heart } from "lucide-react";
+import {getProducts, deleteProduct} from "../services/productService.js";
 
 const Products = () => {
   const products = [
@@ -73,6 +74,18 @@ const Products = () => {
     others: []
   });
 
+  const [productsData,setProductsData] = useState([]);
+
+  useEffect(() => {
+        getProducts().then((data) => {
+          console.log(data);
+          setProductsData(data.data);
+        })
+      
+  }, [])
+  
+
+
   const [searchValue, setSearchValue] = useState("");
 
   function onFilterHandler (filtersValue) {
@@ -84,7 +97,7 @@ const Products = () => {
     console.log(searchValue)
   }
 
-  const filteredProducts = products.filter((product) => {
+  const filteredProducts = productsData.filter((product) => {
 
     const search = searchValue.trim().toLowerCase();
     const matchesSearch = search === "" || product.title.toLowerCase().includes(search);
@@ -117,6 +130,8 @@ const Products = () => {
     localStorage.setItem("favorite-items", JSON.stringify(favorites));
   }
 
+
+
   
   return (
     <div className="products-page">
@@ -135,7 +150,7 @@ const Products = () => {
                     category={product.category}
                     definition={product.definition}
                     price={product.price}
-                    value={product.value}
+                    value={"Add to cart"}
                     favorite={<Heart />}
                     type={product.type}
                     color={product.color}
