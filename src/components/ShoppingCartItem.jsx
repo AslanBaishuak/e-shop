@@ -1,9 +1,8 @@
 import React from "react";
 import {Trash} from "lucide-react";
 
-const ShoppingCartItem = ({ src, title, price, quantity, onRemove }) => {
+const ShoppingCartItem = ({ src, title, price, quantity, onRemove, onChangeQuantity }) => {
 
-    console.log(quantity)
 
     return (
         <div className="shopping-cart-item">
@@ -13,9 +12,9 @@ const ShoppingCartItem = ({ src, title, price, quantity, onRemove }) => {
                     <h2 className="shopping-cart-title">{title}</h2>
                     <span className="shopping-cart-price">{price}</span>
                     <span className="shopping-cart-quantity">
-                        <button>-</button>
+                        <button onClick={() => onChangeQuantity(quantity - 1)}>-</button>
                         Quantity: {quantity}
-                        <button>+</button>
+                        <button onClick={() => onChangeQuantity(quantity + 1)}>+</button>
                     </span>
                 </div>
             </div>

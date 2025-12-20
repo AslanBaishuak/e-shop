@@ -1,10 +1,12 @@
 // Products.jsx
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard.jsx";
 import FilterSidebar from "../components/FilterSidebar.jsx";
 import SearchForm from "../components/SearchForm.jsx";
 import { Heart } from "lucide-react";
-import {getProducts, deleteProduct} from "../services/productService.js";
+import { getProducts, deleteProduct } from "../services/productService.js";
+import { addToCart as addProductToCart } from "../services/cartService.js";
+import { addFavorite,getFavorite } from "../services/favoritesService.js";
 
 const Products = () => {
   const products = [
@@ -66,6 +68,19 @@ const Products = () => {
     },
   ];
 
+  const [productsData, setProductsData] = useState([]);
+  const [deleted, setDeleted] = useState(false);
+
+  async function fetchProducts() {
+    const response = await getProducts();
+    console.log(response.data)
+    setProductsData(response.data)
+  }
+
+  useEffect(() => {
+   fetchProducts();
+  }, []);
+
   const [filters, setFilters] = useState({
     types: [],
     colors: [],
@@ -73,18 +88,6 @@ const Products = () => {
     gender: [],
     others: []
   });
-
-  const [productsData,setProductsData] = useState([]);
-
-  useEffect(() => {
-        getProducts().then((data) => {
-          console.log(data);
-          setProductsData(data.data);
-        })
-      
-  }, [])
-  
-
 
   const [searchValue, setSearchValue] = useState("");
 
@@ -113,30 +116,38 @@ const Products = () => {
     return matchType && matchColor && matchSize && matchGender && matchOthers;
   })
 
-  function addToCart(index) {
+  async function addToCart(index) {
     const product = filteredProducts.find((el, i) => i === index);
     
-    const products = JSON.parse(localStorage.getItem("cart-items")) || [];
-    products.push(product);
-
-    localStorage.setItem("cart-items", JSON.stringify(products));
+    try {
+      await addProductToCart(product.id, 1);
+      console.log("Продукт успешно добавлен в корзину")
+    } catch (e) {
+      console.error('Ошибка при добавлении в корзину', e)
+    }
   }
 
-  function addToFavorite(index) {
-    const product = filteredProducts.find((el, i) => i === index);
-    const favorites = JSON.parse(localStorage.getItem("favorite-items")) || [];
-    favorites.push(product);
-
-    localStorage.setItem("favorite-items", JSON.stringify(favorites));
+async function addToFavorite(productId) {
+  const product = filteredProducts.find((el,i) => i===productId);
+  try {
+    await addFavorite(product.id);
+    console.log("Product succesfully added");
+  }catch (e) {
+    console.error("Problem when adding to favorites",e)
   }
+}
 
 
-
+  async function deleteProductHandler (id) {
+      await deleteProduct(id);
+      const response = await getProducts();
+      setProductsData(response.data);
+  }
   
   return (
     <div className="products-page">
       <h1>Products Page</h1>
-        <SearchForm onSearchHandler={onSearchHandler}  />
+      <SearchForm onSearchHandler={onSearchHandler}  />
 
       <div className="products-content">
 
@@ -144,6 +155,7 @@ const Products = () => {
         <div className="products-grid">
             {filteredProducts.map((product, index) => (
                 <ProductCard
+                    id={product.id}
                     key={index}
                     src={product.src}
                     title={product.title}
@@ -159,6 +171,7 @@ const Products = () => {
                     others={product.others}
                     onAdd={() => addToCart(index)}
                     onAddToFavorite={() => addToFavorite(index)}
+                    onDelete={() => deleteProductHandler(product.id)}
                 />
             ))}
         </div>

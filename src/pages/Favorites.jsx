@@ -1,20 +1,30 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import FavoritesItem from "../components/FavoritesItem";
-import "../Favorites.css";
+import "./Favorites.css";
+import {getFavorite,deleteFavorites,} from "../services/favoritesService";
+
 
 const Favorites = () => {
   const [favoriteItems, setFavoriteItems] = useState([]);
-  useEffect(() => {
-    const products = JSON.parse(localStorage.getItem("favorite-items")) || [];
-    setFavoriteItems(products);
-  }, []);
-
-  function removeFavoriteItems(index) {
-    const newFavoriteItems = favoriteItems.filter((item, i) => i !== index);
-    localStorage.setItem("favorite-items", JSON.stringify(newFavoriteItems));
-    setFavoriteItems(newFavoriteItems);
+  async function fetchFavorite() {
+    const response = await getFavorite();
+    setFavoriteItems(response.data);
   }
+  useEffect( () =>{
+    fetchFavorite()
+  },[]);
+
+  async function removeFavoriteItems(index) {
+    const newFavoriteItems  = favoriteItems.find((item,i) => i===index);
+
+    await deleteFavorites(newFavoriteItems.id);
+    const response = await getFavorite();
+    setFavoriteItems(response.data);
+  }
+
+
+
   return (
     <div className="favorites-page">
       <h1 className="favorites-title">Favorites Products</h1>
@@ -23,8 +33,8 @@ const Favorites = () => {
       ) : (
         favoriteItems.map((item, index) => (
           <FavoritesItem
-            key={index}
-            src={item.img}  
+            key={item.id}
+            src={item.img}
             title={item.title}
             price={item.price}
             quantity={item.quantity}
